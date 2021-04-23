@@ -26,7 +26,7 @@ bool search(vector<int>& nums, int target) {
     }
 ```
 
-**复杂度分析**
+<b>复杂度分析</b>
 
 时间复杂度：$O(n)$  
 
@@ -64,7 +64,7 @@ bool search(vector<int>& nums, int target) {
     }
 ```
 
-**复杂度分析**
+<b>复杂度分析</b>
 
 时间复杂度：$O(n)$ ，最坏情况下整个数组全部为相同元素。
 
