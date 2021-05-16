@@ -132,3 +132,53 @@ public:
 时间复杂度：$ O(s) $ ，插入、查找的时间复杂度等于$O(s)$ ,为字符串的长度。 
 
 空间复杂度：$ O(26*Len) $ ,Len 为所有字符的长度之和。
+
+
+
+<b>数组实现代码</b>
+
+```c++
+int son[1000010][26];
+    int cnt[1000010];
+    int idx;
+    /** Initialize your data structure here. */
+    Trie() {
+        idx = 0;
+        memset(son,0,sizeof(son));
+        memset(cnt,0,sizeof(cnt));
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        int p = 0;
+        for(int i = 0; word[i]; ++i){
+            int u = word[i]-'a';
+            if(!son[p][u]) son[p][u] = ++idx;
+            p = son[p][u];
+        }
+        cnt[p]++;
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        int p = 0;
+        for(int i = 0; word[i]; ++i){
+            int u = word[i]-'a';
+            if(!son[p][u]) return false;
+            p = son[p][u];
+        }
+        return cnt[p];
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        int p = 0;
+        for(int i = 0; prefix[i]; ++i){
+            int u = prefix[i]-'a';
+            if(!son[p][u]) return false;
+            p = son[p][u];
+        }
+        return true;
+    }
+```
+
