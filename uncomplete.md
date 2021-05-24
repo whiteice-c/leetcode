@@ -5,3 +5,8 @@
 #### [421. 数组中两个数的最大异或值](https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/)
 
 #### [460. LFU 缓存](https://leetcode-cn.com/problems/lfu-cache/)
+
+#### [664. 奇怪的打印机](https://leetcode-cn.com/problems/strange-printer/)
+
+#### [810. 黑板异或游戏](https://leetcode-cn.com/problems/chalkboard-xor-game/)
+

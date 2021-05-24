@@ -119,3 +119,100 @@ public:
 时间复杂度：$ O(n) $ 
 
 空间复杂度：$O(n)$ 
+
+
+
+<b>思路二：双hashmap</b>
+
+我们可以使用两个hashmap，第一个hashmap保存freq_table = [freq,List]， 保存的为freq和其对应的链表，另外一个hashmap保存的是node_map = [key,node] ，即每个节点在第一个hashmao中的具体位置。
+
++ put：若插入的元素在node_map中不存在且缓存未满，则我们需要将其插入到freq_table[1]的链表头部。若插入的元素不存在但缓存满了，我们需要从含有节点的最低频率链表中删除尾部元素，然后再插入到freq_table[1]的链表头部。若插入的元素已经存在，我们需要更新value和freq，并将其从原频率freq_table[node->freq]链表中删除，然后加入到新的频率链表freq_table[node->freq+1]头部。
++ get : 若节点存在，我们需要更新其频率，将其从频率freq_table[node->freq]链表中删除，然后加入到新的频率链表freq_table[node->freq+1]头部。若不存在，则返回-1.
++ minfreq: 我们需要维护一个min_freq，以实现在$O(1)$ 时间内删除缓存中最低频率的节点。
+
+
+
+```c++
+struct Node{
+    int freq,key,value;
+    Node(int _freq,int _key,int _value) : freq(_freq) ,key(_key),value(_value){} 
+};
+
+class LFUCache {
+private:
+    int capacity,cnt,minfreq;
+    unordered_map<int,list<Node>::iterator> node_map;
+    unordered_map<int,list<Node>> freq_table; //保存频率表对应的头尾节点
+public:
+    LFUCache(int capacity) {
+        this->capacity = capacity;
+        cnt = 0;
+        minfreq = 1;
+    }
+    
+    int get(int key) {   
+        if(capacity == 0) return -1;
+        //先删除该节点，然后添加到freq+1链表头部,观察是否需要更新min_freq
+        auto it = node_map.find(key);
+        if(it != node_map.end()){
+            //先删除该节点，然后添加到freq+1链表头部,观察是否需要更新min_freq
+            list<Node>::iterator node = it->second;
+            int freq = node->freq, value = node->value;
+            freq_table[freq].erase(node); //删除该节点
+            if(freq_table[freq].size() == 0 ){
+                freq_table.erase(freq);
+                if(freq == minfreq ) minfreq++;//更新最小节点
+            }
+            freq_table[freq+1].push_front(Node(freq+1,key,value));
+            node_map[key] =  freq_table[freq+1].begin();
+            return value;
+        }
+        return -1;
+    }
+    
+    void put(int key, int value) {
+        if(capacity == 0 ) return;
+        auto it = node_map.find(key);
+        if(it != node_map.end()){
+            //先删除该节点，然后添加到freq+1链表头部,观察是否需要更新min_freq
+            list<Node>::iterator node = it->second;
+            int freq = node->freq;
+            freq_table[freq].erase(node); //删除该节点
+            if(freq_table[freq].size() == 0 ){
+                freq_table.erase(freq);
+                if(freq == minfreq ) minfreq++;//更新最小节点
+            }
+            freq_table[freq+1].push_front(Node(freq+1,key,value));
+            node_map[key] =  freq_table[freq+1].begin();  //更新内存地址
+            return;
+        }
+
+        if(cnt < capacity){
+            //添加到frea_table[1]头部
+            freq_table[1].push_front(Node(1,key,value));
+            node_map[key] = freq_table[1].begin();
+            minfreq = 1;
+            cnt++;
+        }
+        else{
+            //先删除frea_table[minfreq]的尾部节点，观察是否需要更新min_freq
+            auto node = freq_table[minfreq].back();
+            node_map.erase(node.key);
+            freq_table[minfreq].pop_back();
+            if(freq_table[minfreq].size() == 0) freq_table.erase(minfreq);
+            freq_table[1].push_front(Node(1,key,value));
+            node_map[key] = freq_table[1].begin();
+            minfreq = 1;
+        }
+
+    }
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache* obj = new LFUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
+```
+
