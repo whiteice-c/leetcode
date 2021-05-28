@@ -10,3 +10,5 @@
 
 #### [810. 黑板异或游戏](https://leetcode-cn.com/problems/chalkboard-xor-game/)
 
+#### [1787. 使所有区间的异或结果为零](https://leetcode-cn.com/problems/make-the-xor-of-all-segments-equal-to-zero/)
+
